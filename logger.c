@@ -6,6 +6,7 @@
 #include "EasyPIO.h"
 #include <time.h>
 #include <sys/time.h>
+#include <wiringPi.h>
 
 // Constants
 #define SAMPLESPERSEC 1000
@@ -84,7 +85,7 @@ void logData(void) {
 	getDateTime();
 	sprintf(fname,"log_%s", tbuf);
 	if ((fptr = fopen(fname, "w")) == NULL) {
-		print("Can't write %s\n", fname);
+		sprintf("Can't write %s\n", fname);
 		exit(1);
 	}
 	
