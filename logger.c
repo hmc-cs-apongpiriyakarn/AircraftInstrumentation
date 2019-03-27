@@ -64,10 +64,6 @@ void spiInit2(void) {
     char data[7];
     int16_t x, y, z;
     double tStart, tDuration, t;
-    if (gpioInitialise() < 0) {
-        printf("Failed to initialize GPIO!");
-        return 1;
-    }
     h = spiOpen(0, speedSPI, 3);
     data[0] = BW_RATE;
     data[1] = 0x0F;
