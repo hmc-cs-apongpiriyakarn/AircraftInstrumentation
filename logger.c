@@ -70,7 +70,7 @@ void getDateTime(void) {
 
 	time_t now = time(NULL); // read seconds since 1970
 	ts = *localtime(&now);
-	strfftime(tbuf, sizeof(tbuf), "%a_%Y_%m_%d_%H_%M_%S_%Z", &ts); //***understand
+	strftime(tbuf, sizeof(tbuf), "%a_%Y_%m_%d_%H_%M_%S_%Z", &ts); //***understand
 }
 
 void logData(void) {
