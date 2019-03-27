@@ -959,9 +959,9 @@ void setPWM(float freq, float dut) {
     PWM_DAT1 = (int)(dut * (CM_FREQUENCY / freq));
 }
 
-void analogWrite(int val) {
-	setPWM(78125, val/255.0);
-}
+// void analogWrite(int val) {
+// 	setPWM(78125, val/255.0);
+// }
 
 #endif
 
