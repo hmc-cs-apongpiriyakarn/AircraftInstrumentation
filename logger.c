@@ -5,10 +5,7 @@
 #include <stdio.h>
 #include "EasyPIO.h"
 #include <time.h>
-#include <pigpio.h>
-#include <math.h>
-#include <string.h>
-#include <stdlib.h>
+#include <sys/time.h>
 
 // Constants
 #define SAMPLESPERSEC 1000
@@ -17,65 +14,52 @@
 #define SAMPLESPERINTERVAL (SAMPLESPERSEC * SECSPERINTERVAL)
 #define STRBUFSIZE 80
 
-#define DATA_FORMAT   0x31  // data format register address
-#define DATA_FORMAT_B 0x0B  // data format bytes: +/- 16g range, 13-bit resolution (p. 26 of ADXL345 datasheet)
-#define READ_BIT      0x80
-#define MULTI_BIT     0x40
-#define BW_RATE       0x2C
-#define POWER_CTL     0x2D
-#define DATAX0        0x32
+#define BW_RATE_ADR             0x2C
+#define DATA_FORMAT_ADR         0x31 // register address
+#define DATA_FORMAT_BYTES_ADR   0x0B // +/-16G range, 13-bit res (p26)
+#define POWER_CONTROL_ADR       0x2D
+#define DATAX0_ADR              0x32
+#define FIFO_CTL_ADR            0x38 
+
+double gettime();
 
 // globals
 char tbuf[STRBUFSIZE];
 
-const char codeVersion[3] = "0.2";  // code version number
-const int timeDefault = 5;  // default duration of data stream, seconds
-const int freqDefault = 5;  // default sampling rate of data stream, Hz
-const int freqMax = 3200;  // maximal allowed cmdline arg sampling rate of data stream, Hz
-const int speedSPI = 2000000;  // SPI communication speed, bps
-const int freqMaxSPI = 100000;  // maximal possible communication sampling rate through SPI, Hz (assumption)
-const int coldStartSamples = 2;  // number of samples to be read before outputting data to console (cold start delays)
-const double coldStartDelay = 0.1;  // time delay between cold start reads
-const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolution
-const double tStatusReport = 1;  // time period of status report if data read to file, seconds
+void adxl345Init(void) {
+	
+    // bit 6 = 1 for multiple consecutive bytes
+    // for READ, bit 7 = 1, for WRITE, bit 7 = 0
+    // Thus, to read the device ID, the complete address is 0xC0 (0x80 + 0x40 + 0x00)
+    data[0] = 0xC0;
+    data[1] = 0x00;
+    send = (data[0] << 8) | data[1];
+    spiSendReceive16(send);
 
-// write data to disk every INVERVAL
+    // Configure outout data rate, clock is 1MHz
+    data[0] = BW_RATE_ADR;              // 0x2C
+    data[1] = 0x0F;                     // > 800 Hz
+    send = (data[0] << 8) | data[1];
+    spiSendReceive16(send);
 
-int readBytes(int handle, char *data, int count) {
-    data[0] |= READ_BIT;
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiXfer(handle, data, data, count);
-}
+    // Set to full resolution(res increases with g range)
+    data[0] = DATA_FORMAT_ADR;          // 0x31
+    data[1] = DATA_FORMAT_BYTES_ADR;    // FULL_RES bit(bit 3), +/-16 G
+    send = (data[0] << 8) | data[1];
+    spiSendReceive16(send);
 
-int writeBytes(int handle, char *data, int count) {
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiWrite(handle, data, count);
-}
+    // Set the wake up bit
+    data[0] = POWER_CONTROL_ADR;        // 0x2D
+    data[1] = 0x08;                     // bit 3 is wake up bit
+    send = (data[0] << 8) | data[1];
+    spiSendReceive16(send);
 
-void spiInit2(void) {
-    char vSave[256] = "";
-    double vTime = timeDefault;
-    double vFreq = freqDefault;
-	/// SPI sensor setup
-    int samples = vFreq * vTime;
-    int samplesMaxSPI = freqMaxSPI * vTime;
-    int success = 1;
-    int h, bytes;
-    char data[7];
-    int16_t x, y, z;
-    double tStart, tDuration, t;
-    h = spiOpen(0, speedSPI, 3);
-    data[0] = BW_RATE;
-    data[1] = 0x0F;
-    writeBytes(h, data, 2);
-    data[0] = DATA_FORMAT;
-    data[1] = DATA_FORMAT_B;
-    writeBytes(h, data, 2);
-    data[0] = POWER_CTL;
-    data[1] = 0x08;
-    writeBytes(h, data, 2);
+    // Bypass FIFO mode
+    data[0] = FIFO_CTL_ADR;             // 0x38
+    data[1] = 0x00;                     // disable everything FIFO
+    send = (data[0] << 8) | data[1];
+    spiSendReceive16(send);
 
-    double delay = 1.0 / vFreq;  // delay between reads in seconds
 }
 
 void getDateTime(void) {
@@ -108,14 +92,14 @@ void logData(void) {
 		mic += MICROSPERSAMPLE; // set time for next sample
 		
 		// *** adjust if Need be
-		low = spiSendReceive(DATAX0);
-		high = spiSendReceive(DATAX0);
+		low = spiSendReceive(DATAX0_ADR);
+		high = spiSendReceive(DATAX0_ADR);
 		samples[sample][0] = low | (high<<8);
-		low = spiSendReceive(DATAX0);
-		high = spiSendReceive(DATAX0);
+		low = spiSendReceive(DATAX0_ADR);
+		high = spiSendReceive(DATAX0_ADR);
 		samples[sample][1] = low | (high<<8);
-		low = spiSendReceive(DATAX0);
-		high = spiSendReceive(DATAX0);
+		low = spiSendReceive(DATAX0_ADR);
+		high = spiSendReceive(DATAX0_ADR);
 		samples[sample][2] = low | (high<<8);
 		
 		sample++;
@@ -136,8 +120,8 @@ void logData(void) {
 
 void main(void) {
 	pioInit();
-	spiInit();
-	spiInit2();
+	spiInit(244000, 0);
+	adxl345Init();
 	logData();
 }
 
