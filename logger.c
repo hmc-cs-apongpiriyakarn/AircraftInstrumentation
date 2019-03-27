@@ -28,6 +28,9 @@ char tbuf[STRBUFSIZE];
 
 void adxl345Init(void) {
 	
+    char data[7];
+    short send;
+	
     // bit 6 = 1 for multiple consecutive bytes
     // for READ, bit 7 = 1, for WRITE, bit 7 = 0
     // Thus, to read the device ID, the complete address is 0xC0 (0x80 + 0x40 + 0x00)
