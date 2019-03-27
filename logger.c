@@ -26,7 +26,7 @@
 #define DATAX0        0x32
 
 // globals
-char tbuf[STRBUFSIZE;]
+char tbuf[STRBUFSIZE];
 
 const char codeVersion[3] = "0.2";  // code version number
 const int timeDefault = 5;  // default duration of data stream, seconds
@@ -52,8 +52,8 @@ int writeBytes(int handle, char *data, int count) {
     return spiWrite(handle, data, count);
 }
 
-void spiInit(void) {
-	char vSave[256] = "";
+void spiInit2(void) {
+    char vSave[256] = "";
     double vTime = timeDefault;
     double vFreq = freqDefault;
 	/// SPI sensor setup
@@ -131,7 +131,7 @@ void logData(void) {
 			sample = 0;
 			// time to write to file
 			fwrite(tbuf, sizeof(char), STRBUFSIZE, fptr);
-			fwrite(samples, sizeof(short), SAMPLESPERINTERFAL, fptr);
+			fwrite(samples, sizeof(short), SAMPLESPERINTERVAL, fptr);
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
@@ -141,6 +141,7 @@ void logData(void) {
 void main(void) {
 	pioInit();
 	spiInit();
+	spiInit2();
 	logData();
 }
 
