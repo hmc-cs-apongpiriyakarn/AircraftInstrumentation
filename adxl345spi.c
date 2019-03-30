@@ -27,7 +27,7 @@ int main() {
     short send, rawx, rawy, rawz;
     int samples = 10; // change later
     short x,y,z;
-    double t;
+    double t, tstart;
 
     // static int seconds_last = 99;
     // char TimeString[128];
