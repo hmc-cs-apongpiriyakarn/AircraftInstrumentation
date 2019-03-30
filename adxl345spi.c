@@ -90,8 +90,9 @@ int main() {
         rawy = (data[4]<<8)|data[3];
         rawz = (data[6]<<8)|data[5];
         t = gettime();
+        printf(rawx = %x \t rawy = %x \t rawz = %x\n", x, y, z);
         printf("time: %.3f, x = %.3f, y = %.3f, z = %.3f\n", t, x*32.0/8192.0, y*32.0/8192.0, z*32.0/8192.0);
-        delayMillis(50);
+        delayMillis(100);
     }
     
     
