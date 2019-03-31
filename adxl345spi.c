@@ -88,17 +88,19 @@ int main() {
         spisend = DATAX0_ADR;
         for(int i = 0; i < 7; i++)
             data[i] = spiSendReceive(spisend);
-        rawx = ((data[3] & 0x0F)<<8)|data[2];
-        rawy = ((data[5] & 0x0F)<<8)|data[4];
-        rawz = ((data[7] & 0x0F)<<8)|data[6];
-        signx = data[3] >> 7;
-        signy = data[5] >> 7;
-        signz = data[7] >> 7;
+        rawx = ((data[2] & 0x0F)<<8)|data[1];
+        rawy = ((data[4] & 0x0F)<<8)|data[3];
+        rawz = ((data[6] & 0x0F)<<8)|data[5];
+        signx = data[2] >> 7;
+        signy = data[4] >> 7;
+        signz = data[6] >> 7;
         t = gettime();
         accelx = (rawx/256.0) - 16*signx;
         accely = (rawy/256.0) - 16*signy;
         accelz = (rawz/256.0) - 16*signz;
-        printf("rawx = %x \t rawy = %x \t rawz = %x\n", rawx, rawy, rawz);
+        printf("data[0]: %x data[1]: %x data[2]: %x data[3]: %x data[4]: %x data[5]: %x data[6]: %x \n",
+ data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+        printf("rawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
         printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n", t, accelx, accely, accelz);
         delayMillis(100);
     }
