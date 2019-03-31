@@ -99,7 +99,7 @@ int main() {
         accely = (rawy/256.0) - 16*signy;
         accelz = (rawz/256.0) - 16*signz;
         printf("rawx = %x \t rawy = %x \t rawz = %x\n", rawx, rawy, rawz);
-        printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n", t, accelx, accely, acccelz;
+        printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n", t, accelx, accely, accelz);
         delayMillis(100);
     }
     
