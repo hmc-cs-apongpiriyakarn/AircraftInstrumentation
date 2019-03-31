@@ -87,8 +87,10 @@ int main() {
     tstart = gettime();
     for(int j=0; j<samples;j++) {
         spisend = DATAX0_ADR;
+        data[0] = 0xB2;
+        data[0] = spiSendReceive(data[0]);
         data[0] = 0xF2;
-        data[0] = spiSendReceive(0xF2);
+        data[1] = 0xF2;
         for(int i = 1; i < 7; i++)
             data[i] = spiSendReceive(data[i]);
         testx = (data[2]<<8)|data[1];
