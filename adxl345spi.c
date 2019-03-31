@@ -89,14 +89,23 @@ int main() {
         spisend = DATAX0_ADR;
         data[0] = 0xB2;
         data[0] = spiSendReceive(data[0]);
-        data[0] = 0xF2;
-        data[1] = 0xF2;
-        for(int i = 1; i < 7; i++)
-            data[i] = spiSendReceive(data[i]);
+//         data[0] = 0xF2;
+//         data[1] = 0xF2;
+//         for(int i = 1; i < 7; i++)
+//             data[i] = spiSendReceive(data[i]);
+        data[1] = spiSendReceive(0xF2);
+        data[2] = spiSendReceive(0xF3);
+        data[3] = spiSendReceive(0xF4);
+        data[4] = spiSendReceive(0xF5);
+        data[5] = spiSendReceive(0xF6);
+        data[6] = spiSendReceive(0xF7);
+        printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
+ data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+        
         testx = (data[2]<<8)|data[1];
         testy = (data[4]<<8)|data[3];
         testz = (data[6]<<8)|data[5];
-        printf("x = %.3f, y = %.3f, z = %.3f\n",
+        printf("test\ntestx = %.3f, testy = %.3f, testz = %.3f\n",
  x * accConversion, y * accConversion, z * accConversion);
         rawx = ((data[2] & 0x0F)<<8)|data[1];
         rawy = ((data[4] & 0x0F)<<8)|data[3];
@@ -108,9 +117,8 @@ int main() {
         accelx = (rawx/256.0) - 16*signx;
         accely = (rawy/256.0) - 16*signy;
         accelz = (rawz/256.0) - 16*signz;
-        printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
- data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
-        printf("rawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
+        
+        printf("raw\nrawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
         printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n", t, accelx, accely, accelz);
         delayMillis(100);
     }
