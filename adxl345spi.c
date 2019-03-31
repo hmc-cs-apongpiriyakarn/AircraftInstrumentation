@@ -89,16 +89,16 @@ int main() {
         spisend = DATAX0_ADR;
         data[0] = 0xB2;
         data[0] = spiSendReceive(data[0]);
-//         data[0] = 0xF2;
-//         data[1] = 0xF2;
-//         for(int i = 1; i < 7; i++)
-//             data[i] = spiSendReceive(data[i]);
-        data[1] = spiSendReceive(0xF2);
-        data[2] = spiSendReceive(0xF3);
-        data[3] = spiSendReceive(0xF4);
-        data[4] = spiSendReceive(0xF5);
-        data[5] = spiSendReceive(0xF6);
-        data[6] = spiSendReceive(0xF7);
+        data[0] = 0xF2;
+        data[1] = 0xF2;
+        for(int i = 1; i < 7; i++)
+            data[i] = spiSendReceive(data[i]);
+//         data[1] = spiSendReceive(0xF2);
+//         data[2] = spiSendReceive(0xF3);
+//         data[3] = spiSendReceive(0xF4);
+//         data[4] = spiSendReceive(0xF5);
+//         data[5] = spiSendReceive(0xF6);
+//         data[6] = spiSendReceive(0xF7);
         printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
  data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         
