@@ -108,7 +108,7 @@ int main() {
         accelx = (rawx/256.0) - 16*signx;
         accely = (rawy/256.0) - 16*signy;
         accelz = (rawz/256.0) - 16*signz;
-        printf("data[0]: %x data[1]: %x data[2]: %x data[3]: %x data[4]: %x data[5]: %x data[6]: %x \n",
+        printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
  data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         printf("rawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
         printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n", t, accelx, accely, accelz);
