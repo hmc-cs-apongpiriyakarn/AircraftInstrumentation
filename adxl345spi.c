@@ -24,7 +24,7 @@ int main() {
 
 
     char data[7],spisend;
-    short send, rawx, rawy, rawz;
+    short send, rawx, rawy, rawz, testx, testy, testz;
     int samples = 10; // change later
     short x,y,z;
     double t, tstart;
@@ -83,11 +83,18 @@ int main() {
     samples=10;
     float accelx, accely, accelz;
     int signx, signy, signz;
+    const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolution
     tstart = gettime();
     for(int j=0; j<samples;j++) {
         spisend = DATAX0_ADR;
-        for(int i = 0; i < 7; i++)
-            data[i] = spiSendReceive(spisend);
+        data[0] = spiSendRecieve(0xB2);
+        for(int i = 1; i < 7; i++)
+            data[i] = spiSendReceive(0x72);
+        testx = (data[2]<<8)|data[1];
+        testy = (data[4]<<8)|data[3];
+        testz = (data[6]<<8)|data[5];
+        printf("x = %.3f, y = %.3f, z = %.3f\n",
+ x * accConversion, y * accConversion, z * accConversion);
         rawx = ((data[2] & 0x0F)<<8)|data[1];
         rawy = ((data[4] & 0x0F)<<8)|data[3];
         rawz = ((data[6] & 0x0F)<<8)|data[5];
