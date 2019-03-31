@@ -89,7 +89,7 @@ int main() {
         spisend = DATAX0_ADR;
         data[0] = 0xB2;
         data[0] = spiSendReceive(data[0]);
-        data[0] = 0xF2;
+//         data[0] = 0xF2;
         data[1] = 0xF2;
         for(int i = 1; i < 7; i++)
             data[i] = spiSendReceive(data[i]);
