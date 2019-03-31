@@ -120,7 +120,7 @@ int main() {
         
         printf("raw\nrawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
         printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n", t, accelx, accely, accelz);
-        delayMillis(100);
+        delayMillis(200);
     }
     
     
