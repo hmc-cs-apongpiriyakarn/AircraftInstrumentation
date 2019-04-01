@@ -134,8 +134,8 @@ int main() {
     tStart = time_time();
     for (i = 0; i < samples; i++) {
         data[0] = DATAX0;
-//         bytes = readBytes(h, data, 7);
-        bytes = spiReceiveM(data, 7);
+        bytes = readBytes(h, data, 7);
+//         bytes = spiReceiveM(data, 7);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
