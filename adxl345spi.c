@@ -6,6 +6,8 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include <pigpio.h>
+
 #define BANDWIDTH_RATE      0x2C
 #define POWER_CONTROL       0x2D
 #define DATA_FORMAT         0x31 // register address
@@ -19,7 +21,7 @@
 int i;
 
 double gettime();
-int readBytes(char *data, int count) {
+int spiReceiveM(char *data, int count) {
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
     for(i=0; i<count; i++)
@@ -27,12 +29,23 @@ int readBytes(char *data, int count) {
     return i;
 }    
 
-int writeBytes(char *data, int count) {
+int spiSendM(char *data, int count) {
     if (count > 1) data[0] |= MULTI_BIT;
     for(i=0; i<count; i++)
         data[i] = spiSendReceive(data[i]);
     return i; 
 }    
+
+int readBytes(int handle, char *data, int count) {
+    data[0] |= READ_BIT;
+    if (count > 1) data[0] |= MULTI_BIT;
+    return spiXfer(handle, data, data, count);
+}
+
+int writeBytes(int handle, char *data, int count) {
+    if (count > 1) data[0] |= MULTI_BIT;
+    return spiWrite(handle, data, count);
+}
 
 char data[7];
 
@@ -74,7 +87,7 @@ int main() {
     // Configure outout data rate, clock is 1MHz
     data[0] = BANDWIDTH_RATE;              // 0x2C
     data[1] = 0x0F;                     // > 800 Hz
-    writeBytes(data, 2);
+    spiSendM(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
 //     spiSendReceive(data[0]);
@@ -83,7 +96,7 @@ int main() {
     // Set to full resolution(res increases with g range)
     data[0] = DATA_FORMAT;          // 0x31
     data[1] = 0x0B;    // FULL_RES bit(bit 3), +/-16 G
-    writeBytes(data, 2);
+    spiSendM(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
 //     spiSendReceive(data[0]);
@@ -92,7 +105,7 @@ int main() {
     // Set the wake up bit
     data[0] = POWER_CONTROL;        // 0x2D
     data[1] = 0x08;                     // bit 3 is wake up bit
-    writeBytes(data, 2);
+    spiSendM(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
 //     spiSendReceive(data[0]);
@@ -119,7 +132,7 @@ int main() {
     
     for(int j=0; j<samples;j++) {
         data[0] = DATAX0;
-        bytes = readBytes(data, 7);
+        bytes = spiReceiveM(data, 7);
         if (bytes == 7) {
             testx = (data[2]<<8)|data[1];
             testy = (data[4]<<8)|data[3];
@@ -149,19 +162,19 @@ int main() {
         
         printf("testx = %.3f, testy = %.3f, testz = %.3f\n",
  x * accConversion, y * accConversion, z * accConversion);
-        rawx = ((data[2] & 0x0F)<<8)|data[1];
-        rawy = ((data[4] & 0x0F)<<8)|data[3];
-        rawz = ((data[6] & 0x0F)<<8)|data[5];
-        signx = data[2] >> 7;
-        signy = data[4] >> 7;
-        signz = data[6] >> 7;
-        t = gettime();
-        accelx = (rawx/256.0) - 16*signx;
-        accely = (rawy/256.0) - 16*signy;
-        accelz = (rawz/256.0) - 16*signz;
+//         rawx = ((data[2] & 0x0F)<<8)|data[1];
+//         rawy = ((data[4] & 0x0F)<<8)|data[3];
+//         rawz = ((data[6] & 0x0F)<<8)|data[5];
+//         signx = data[2] >> 7;
+//         signy = data[4] >> 7;
+//         signz = data[6] >> 7;
+//         t = gettime();
+//         accelx = (rawx/256.0) - 16*signx;
+//         accely = (rawy/256.0) - 16*signy;
+//         accelz = (rawz/256.0) - 16*signz;
         
-        printf("rawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
-        printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n\n", t, accelx, accely, accelz);
+//         printf("rawx = %x rawy = %x rawz = %x\n", rawx, rawy, rawz);
+//         printf("time: %.3f, x = %.9f, y = %.9f, z = %.9f\n\n", t, accelx, accely, accelz);
         delayMillis(200);
     }
     
