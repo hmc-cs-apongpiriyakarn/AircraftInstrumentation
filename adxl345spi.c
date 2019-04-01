@@ -106,7 +106,7 @@ int main() {
     int16_t x, y, z;
     double tStart, tDuration, t;
     double delay = 1.0 / vFreq;
-    gpioInitialise()
+    gpioInitialise();
     
     data[0] = BW_RATE;
     data[1] = 0x0F;
