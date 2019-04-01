@@ -107,6 +107,7 @@ int main() {
     double tStart, tDuration, t;
     double delay = 1.0 / vFreq;
     gpioInitialise();
+    h = spiOpen(0, speedSPI, 3);
     
     data[0] = BW_RATE;
     data[1] = 0x0F;
