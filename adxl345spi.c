@@ -16,6 +16,7 @@
 #define DATAX0              0x32
 
 #define DATA_FORMAT_BYTES   0x0B // +/-16G range, 13-bit res (p26)
+#define DATA_FORMAT_B 0x0B
 #define FIFO_CTL            0x38 
 #define READ_BIT            0x80
 #define MULTI_BIT           0x40
@@ -117,34 +118,35 @@ int main() {
     writeBytes(h, data, 2);
     
     for (i = 0; i < coldStartSamples; i++) {
-            data[0] = DATAX0;
-            bytes = readBytes(h, data, 7);
-            if (bytes != 7) {
-                success = 0;
-            }
-            time_sleep(coldStartDelay);
+        data[0] = DATAX0;
+        bytes = readBytes(h, data, 7);
+        if (bytes != 7) {
+            success = 0;
         }
-        // real reads happen here
-        tStart = time_time();
-        for (i = 0; i < samples; i++) {
-            data[0] = DATAX0;
-            bytes = readBytes(h, data, 7);
-            if (bytes == 7) {
-                x = (data[2]<<8)|data[1];
-                y = (data[4]<<8)|data[3];
-                z = (data[6]<<8)|data[5];
-                t = time_time() - tStart;
-                printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
-                       t, x * accConversion, y * accConversion, z * accConversion);
-                }
-            else {
-                success = 0;
-            }
-            time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
+        time_sleep(coldStartDelay);
+    }
+    // real reads happen here
+    tStart = time_time();
+    for (i = 0; i < samples; i++) {
+        data[0] = DATAX0;
+        bytes = readBytes(h, data, 7);
+        if (bytes == 7) {
+            x = (data[2]<<8)|data[1];
+            y = (data[4]<<8)|data[3];
+            z = (data[6]<<8)|data[5];
+            t = time_time() - tStart;
+            printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
+                   t, x * accConversion, y * accConversion, z * accConversion);
         }
-        tDuration = time_time() - tStart;  // need to update current time to give a closer estimate of sampling rate
-        printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);
-        
+        else {
+            success = 0;
+        }
+        time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
+    }
+    tDuration = time_time() - tStart;  // need to update current time to give a closer estimate of sampling rate
+    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);
+    return 0;
+}
     
 //     // Configure outout data rate, clock is 1MHz
 //     data[0] = BANDWIDTH_RATE;              // 0x2C
@@ -206,7 +208,7 @@ int main() {
 //                 ly = testy;
 //                 lz = testz;
 //             }
-        }
+//         }
 //         data[0] = spiSendReceive(data[0]);
 //         data[0] = 0xF2;
 //         data[1] = 0xF2;
@@ -266,8 +268,7 @@ int main() {
 //         delayMillis(100);
 //     }
 //     printf("%d samples read in %.3f seconds with %.1f Hz\n", samples, t-tstart, samples/(t-tstart));
-    return 0;
-}
+
 
 double gettime(void) {
     struct timeval tv;
