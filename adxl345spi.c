@@ -2,17 +2,39 @@
 // 3/4/19
 
 #include "EasyPIO.h"
+// #include <stdio.h>
 #include <time.h>
 #include <sys/time.h>
 
-#define BW_RATE_ADR             0x2C
-#define DATA_FORMAT_ADR         0x31 // register address
-#define DATA_FORMAT_BYTES_ADR   0x0B // +/-16G range, 13-bit res (p26)
-#define POWER_CONTROL_ADR       0x2D
-#define DATAX0_ADR              0x32
-#define FIFO_CTL_ADR            0x38 
+#define BANDWIDTH_RATE      0x2C
+#define POWER_CONTROL       0x2D
+#define DATA_FORMAT         0x31 // register address
+#define DATAX0              0x32
+
+#define DATA_FORMAT_BYTES   0x0B // +/-16G range, 13-bit res (p26)
+#define FIFO_CTL            0x38 
+#define READ_BIT            0x80
+#define MULTI_BIT           0x40
+
+int i;
 
 double gettime();
+int readBytes(char *data, int count) {
+    data[0] |= READ_BIT;
+    if (count > 1) data[0] |= MULTI_BIT;
+    for(i=0; i<count; i++)
+        data[i] = spiSendReceive(data[i]);
+    return i;
+}    
+
+int writeBytes(char *data, int count) {
+    if (count > 1) data[0] |= MULTI_BIT;
+    for(i=0; i<count; i++)
+        data[i] = spiSendReceive(data[i]);
+    return i; 
+}    
+
+char data[7];
 
 int main() {
 
@@ -23,7 +45,7 @@ int main() {
     spiInit(244000, 0);
 
 
-    char data[7],spisend;
+    char spisend;
     short send, rawx, rawy, rawz, testx, testy, testz;
     int samples = 10; // change later
     short x,y,z;
@@ -41,36 +63,39 @@ int main() {
     // bit 6 = 1 for multiple consecutive bytes
     // for READ, bit 7 = 1, for WRITE, bit 7 = 0
     // Thus, to read the device ID, the complete address is 0xC0 (0x80 + 0x40 + 0x00)
-    data[0] = 0xC0;
-    data[1] = 0x00;
+//     data[0] = 0xC0;
+//     data[1] = 0x00;
     //send = (data[0] << 8) | data[1];
     //spiSendReceive16(send);
     spiSendReceive(data[0]);
     spiSendReceive(data[1]);
 
     // Configure outout data rate, clock is 1MHz
-    data[0] = BW_RATE_ADR;              // 0x2C
+    data[0] = BANDWIDTH_RATE;              // 0x2C
     data[1] = 0x0F;                     // > 800 Hz
+    writeBytes(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
-    spiSendReceive(data[0]);
-    spiSendReceive(data[1]);
+//     spiSendReceive(data[0]);
+//     spiSendReceive(data[1]);
 
     // Set to full resolution(res increases with g range)
-    data[0] = DATA_FORMAT_ADR;          // 0x31
-    data[1] = DATA_FORMAT_BYTES_ADR;    // FULL_RES bit(bit 3), +/-16 G
+    data[0] = DATA_FORMAT;          // 0x31
+    data[1] = DATA_FORMAT_BYTES;    // FULL_RES bit(bit 3), +/-16 G
+    writeBytes(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
-    spiSendReceive(data[0]);
-    spiSendReceive(data[1]);
+//     spiSendReceive(data[0]);
+//     spiSendReceive(data[1]);
 
     // Set the wake up bit
-    data[0] = POWER_CONTROL_ADR;        // 0x2D
+    data[0] = POWER_CONTROL;        // 0x2D
     data[1] = 0x08;                     // bit 3 is wake up bit
+    writeBytes(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
-    spiSendReceive(data[0]);
-    spiSendReceive(data[1]);
+//     spiSendReceive(data[0]);
+//     spiSendReceive(data[1]);
 
     // Bypass FIFO mode
 //     data[0] = FIFO_CTL_ADR;             // 0x38
@@ -84,15 +109,33 @@ int main() {
     float accelx, accely, accelz;
     int signx, signy, signz;
     const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolution
+    int16_t x,y,z, lx,ly,lz;
     tstart = gettime();
+    int bytes;
+    lx=0;
+    ly=0;
+    lz=0;
+    
     for(int j=0; j<samples;j++) {
-        spisend = DATAX0_ADR;
-        data[0] = 0xB2;
-        data[0] = spiSendReceive(data[0]);
+        data[0] = DATAX0;
+        bytes = readBytes(data, 7);
+        if (bytes == 7) {
+            testx = (data[2]<<8)|data[1];
+            testy = (data[4]<<8)|data[3];
+            testz = (data[6]<<8)|data[5];
+            
+            if((abs(testx-lx)>30) || (abs(testy-ly)>30) || (abs(testz-lz)>30)) {
+                printf("x=%d y=%d z=%d\n", testx, testy, testz);
+                lx = testx;
+                ly = testy;
+                lz = testz;
+            }
+        }
+//         data[0] = spiSendReceive(data[0]);
 //         data[0] = 0xF2;
-        data[1] = 0xF2;
-        for(int i = 1; i < 7; i++)
-            data[i] = spiSendReceive(data[i]);
+//         data[1] = 0xF2;
+//         for(int i = 1; i < 7; i++)
+//             data[i] = spiSendReceive(data[i]);
 //         data[1] = spiSendReceive(0xF2);
 //         data[2] = spiSendReceive(0xF3);
 //         data[3] = spiSendReceive(0xF4);
@@ -102,9 +145,7 @@ int main() {
         printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
  data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         
-        testx = (data[2]<<8)|data[1];
-        testy = (data[4]<<8)|data[3];
-        testz = (data[6]<<8)|data[5];
+        
         printf("test\ntestx = %.3f, testy = %.3f, testz = %.3f\n",
  x * accConversion, y * accConversion, z * accConversion);
         rawx = ((data[2] & 0x0F)<<8)|data[1];
