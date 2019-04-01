@@ -68,8 +68,8 @@ int main() {
 //     data[1] = 0x00;
     //send = (data[0] << 8) | data[1];
     //spiSendReceive16(send);
-    spiSendReceive(data[0]);
-    spiSendReceive(data[1]);
+//     spiSendReceive(data[0]);
+//     spiSendReceive(data[1]);
 
     // Configure outout data rate, clock is 1MHz
     data[0] = BANDWIDTH_RATE;              // 0x2C
@@ -82,7 +82,7 @@ int main() {
 
     // Set to full resolution(res increases with g range)
     data[0] = DATA_FORMAT;          // 0x31
-    data[1] = 0x01;    // FULL_RES bit(bit 3), +/-16 G
+    data[1] = 0x0B;    // FULL_RES bit(bit 3), +/-16 G
     writeBytes(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
@@ -106,7 +106,7 @@ int main() {
 //     spiSendReceive(data[0]);
 //     spiSendReceive(data[1]);
 
-    samples=10;
+    samples=100;
     float accelx, accely, accelz;
     int signx, signy, signz;
     const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolution
@@ -125,12 +125,12 @@ int main() {
             testy = (data[4]<<8)|data[3];
             testz = (data[6]<<8)|data[5];
             
-            if((abs(testx-lx)>30) || (abs(testy-ly)>30) || (abs(testz-lz)>30)) {
+//             if((abs(testx-lx)>30) || (abs(testy-ly)>30) || (abs(testz-lz)>30)) {
                 printf("new\nx=%d y=%d z=%d\n", testx, testy, testz);
-                lx = testx;
-                ly = testy;
-                lz = testz;
-            }
+//                 lx = testx;
+//                 ly = testy;
+//                 lz = testz;
+//             }
         }
 //         data[0] = spiSendReceive(data[0]);
 //         data[0] = 0xF2;
