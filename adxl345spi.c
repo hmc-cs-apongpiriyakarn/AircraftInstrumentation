@@ -9,6 +9,8 @@
 #include <pigpio.h>
 
 #define BANDWIDTH_RATE      0x2C
+#define BW_RATE       0x2C
+#define POWER_CTL     0x2D
 #define POWER_CONTROL       0x2D
 #define DATA_FORMAT         0x31 // register address
 #define DATAX0              0x32
@@ -67,12 +69,12 @@ int main() {
     spiInit(244000, 0);
 
 
-    char spisend;
-    short send, rawx, rawy, rawz;
-//     short  testx, testy, testz;
-    int samples = 10; // change later
-    short x,y,z;
-    double t, tstart;
+//     char spisend;
+//     short send, rawx, rawy, rawz;
+// //     short  testx, testy, testz;
+//     int samples = 10; // change later
+//     short x,y,z;
+//     double t, tstart;
 
     // static int seconds_last = 99;
     // char TimeString[128];
@@ -93,7 +95,7 @@ int main() {
 //     spiSendReceive(data[0]);
 //     spiSendReceive(data[1]);
 
-    ouble vTime = timeDefault;
+    double vTime = timeDefault;
     double vFreq = freqDefault;
     int samples = vFreq * vTime;
     int samplesMaxSPI = freqMaxSPI * vTime;
