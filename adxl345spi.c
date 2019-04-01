@@ -111,13 +111,16 @@ int main() {
     
     data[0] = BW_RATE;
     data[1] = 0x0F;
-    writeBytes(h, data, 2);
+    //writeBytes(h, data, 2);
+    spiSendM(data, 2);
     data[0] = DATA_FORMAT;
     data[1] = DATA_FORMAT_B;
-    writeBytes(h, data, 2);
+//     writeBytes(h, data, 2);
+    spiSendM(data, 2);
     data[0] = POWER_CTL;
     data[1] = 0x08;
-    writeBytes(h, data, 2);
+//     writeBytes(h, data, 2);
+    spiSendM(data, 2);
     
     for (i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0;
