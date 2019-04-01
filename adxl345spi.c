@@ -36,16 +36,16 @@ int spiSendM(char *data, int count) {
     return i; 
 }    
 
-int readBytes(int handle, char *data, int count) {
-    data[0] |= READ_BIT;
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiXfer(handle, data, data, count);
-}
+// int readBytes(int handle, char *data, int count) {
+//     data[0] |= READ_BIT;
+//     if (count > 1) data[0] |= MULTI_BIT;
+//     return spiXfer(handle, data, data, count);
+// }
 
-int writeBytes(int handle, char *data, int count) {
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiWrite(handle, data, count);
-}
+// int writeBytes(int handle, char *data, int count) {
+//     if (count > 1) data[0] |= MULTI_BIT;
+//     return spiWrite(handle, data, count);
+// }
 
 char data[7];
 
