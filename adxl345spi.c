@@ -28,7 +28,7 @@ int spiReceiveM(char *data, int count) {
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
     for(i=0; i<count; i++)
-        data[i] = spiSendReceive(data[i]);
+        data[6-i] = spiSendReceive(data[i]);
     return i;
 }    
 
@@ -134,8 +134,8 @@ int main() {
     tStart = time_time();
     for (i = 0; i < samples; i++) {
         data[0] = DATAX0;
-        bytes = readBytes(h, data, 7);
-//         bytes = spiReceiveM(data, 7);
+//         bytes = readBytes(h, data, 7);
+        bytes = spiReceiveM(data, 7);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
