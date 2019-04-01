@@ -46,7 +46,8 @@ int main() {
 
 
     char spisend;
-    short send, rawx, rawy, rawz, testx, testy, testz;
+    short send, rawx, rawy, rawz;
+//     short  testx, testy, testz;
     int samples = 10; // change later
     short x,y,z;
     double t, tstart;
@@ -109,7 +110,7 @@ int main() {
     float accelx, accely, accelz;
     int signx, signy, signz;
     const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolution
-    int16_t x,y,z, lx,ly,lz;
+    int16_t testx,testy,testz, lx,ly,lz;
     tstart = gettime();
     int bytes;
     lx=0;
