@@ -82,7 +82,7 @@ int main() {
 
     // Set to full resolution(res increases with g range)
     data[0] = DATA_FORMAT;          // 0x31
-    data[1] = DATA_FORMAT_BYTES;    // FULL_RES bit(bit 3), +/-16 G
+    data[1] = 0x01;    // FULL_RES bit(bit 3), +/-16 G
     writeBytes(data, 2);
 //     send = (data[0] << 8) | data[1];
 //     spiSendReceive16(send);
