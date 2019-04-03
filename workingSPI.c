@@ -68,9 +68,9 @@ void readADXL345(int sample) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
             z = (data[6]<<8)|data[5];
-            t = time_time() - tStart;
-            printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
-                   t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
+//             t = time_time() - tStart;
+            printf(" x = %.3f, y = %.3f, z = %.3f\n",
+                   x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
