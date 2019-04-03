@@ -63,8 +63,9 @@ int main() {
         delayMillis(200);
     }
     tDuration = time_time() - tStart; 
-    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);
+    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration);
     
+    printf("====spiSendReceiveBytes====\n");
     tStart = time_time();
     for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
