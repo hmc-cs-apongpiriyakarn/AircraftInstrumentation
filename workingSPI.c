@@ -14,15 +14,16 @@
 #define READ_BIT            0x80
 #define MULTI_BIT           0x40
 
-double gettime();
-int spiSendReceiveBytes(char *data, int count);
-void spiSend(char *data, int count);
-int readBytes(int handle, char *data, int count);
-void initADXL345(void);
-void readADXL345(void);
+// double gettime();
+// int spiSendReceiveBytes(char *data, int count);
+// void spiSend(char *data, int count);
+// int readBytes(int handle, char *data, int count);
+// void initADXL345(void);
+// void readADXL345(void);
 
 char data[7];
 int h;
+short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
 
 void initADXL345(void) {
     int speedSPI = 2000000;
@@ -42,31 +43,93 @@ void initADXL345(void) {
     spiSend(data, 2);
 }
 
-void readADXL345(void) {
+void readADXL345(int sample) {
     int samples = 5;
     int bytes;
     int16_t x, y, z;
     double tStart, tDuration, t;
     
-    tStart = time_time();
+//     tStart = time_time();
     for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
         //bytes = spiSendReceiveBytes(data, 7);
-        printf("data[0]: %x \nx0: %x \tx1: %x \ny0: %x \ty1: %x \nz0: %x \tz1: %x \n",
-            data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+//         printf("data[0]: %x \nx0: %x \tx1: %x \ny0: %x \ty1: %x \nz0: %x \tz1: %x \n",
+//             data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+        
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
             z = (data[6]<<8)|data[5];
-            t = time_time() - tStart;
-            printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
-                   t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
+//             t = time_time() - tStart;
+//             printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
+//                    t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
+            samples[sample][0] = x;
+            samples[sample][1] = y;
+            samples[sample][2] = z;
         }
-        delayMillis(200);
+//         delayMillis(200);
     }
-    tDuration = time_time() - tStart; 
-    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration); 
+//     tDuration = time_time() - tStart; 
+//     printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration); 
+}
+
+void getDateTime(void) {
+	struct tm ts;
+
+	time_t now = time(NULL); // read seconds since 1970
+	ts = *localtime(&now);
+	strfftime(tbuf, sizeof(tbuf), "%a_%Y_%m_%d_%H_%M_%S_%Z", &ts); //***understand
+}
+
+void logData(void) {
+	short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
+	int low, high;
+	char fname[STRBUFSIZE];
+	FILE *fptr;
+	int sample = 0, sec=0;
+	
+	// open file with current timestampe
+	getDateTime();
+	sprintf(fname,"log_%s", tbuf);
+	if ((fptr = fopen(fname, "w")) == NULL) {
+		print("Can't write %s\n", fname);
+		exit(1);
+	}
+	
+	unsigned long mic = micros();
+	
+	while (1) {
+		while (micros()-mic < MICROSPERSAMPLE); // wait until time for next sample
+		mic += MICROSPERSAMPLE; // set time for next sample
+		
+// 		// *** adjust if Need be
+// 		low = spiSendReceive(ACCELXH);
+// 		high = spiSendReceive(ACCELXL);
+// 		samples[sample][0] = low | (high<<8);
+// 		low = spiSendReceive(ACCELYH);
+// 		high = spiSendReceive(ACCELYL);
+// 		samples[sample][1] = low | (high<<8);
+// 		low = spiSendReceive(ACCELYH);
+// 		high = spiSendReceive(ACCELYL);
+// 		samples[sample][2] = low | (high<<8);
+        
+        readADXL345(sample);
+		
+		sample++;
+		if (sample % SAMPLESPERSEC == 0) {
+			sec++;
+		}
+		if (sec >= SECSPERINTERVAL) {
+			sec = 0;
+			sample = 0;
+			// time to write to file
+			fwrite(tbuf, sizeof(char), STRBUFSIZE, fptr);
+			fwrite(samples, sizeof(short), SAMPLESPERINTERFAL, fptr);
+			fflush(fptr); // make sure write completes
+			getDateTime(); // update time for next interval
+		}
+	}
 }
 
 double gettime(void) {
@@ -104,7 +167,8 @@ int main() {
     pioInit();
     spiInit(244000, 0); 
     initADXL345();
-    readADXL345();
+//     readADXL345(sample);
+    logData();
    
     return 0;
 }
