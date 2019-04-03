@@ -22,31 +22,10 @@
 int i;
 
 double gettime();
-int spiReceiveM(char *data, int count) {
-    data[0] |= READ_BIT;
-    if (count > 1) data[0] |= MULTI_BIT;
-    for(i=0; i<count; i++)
-        data[6-i] = spiSendReceive(data[i]);
-    return i;
-}    
-
-int spiSendM(char *data, int count) {
-    if (count > 1) data[0] |= MULTI_BIT;
-    for(i=0; i<count; i++)
-        data[i] = spiSendReceive(data[i]);
-    return i; 
-}    
-
-int readBytes(int handle, char *data, int count) {
-    data[0] |= READ_BIT;
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiXfer(handle, data, data, count);
-}
-
-int writeBytes(int handle, char *data, int count) {
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiWrite(handle, data, count);
-}
+int spiReceiveM(char *data, int count);
+int spiSendM(char *data, int count);
+int readBytes(int handle, char *data, int count);
+int writeBytes(int handle, char *data, int count);
 
 char data[7];
 const int timeDefault = 5;  // default duration of data stream, seconds
@@ -104,8 +83,8 @@ int main() {
     tStart = time_time();
     for (i = 0; i < samples; i++) {
         data[0] = DATAX0;
-//         bytes = readBytes(h, data, 7);
-        bytes = spiReceiveM(data, 7);
+        bytes = readBytes(h, data, 7);
+        //bytes = spiReceiveM(data, 7);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
@@ -131,4 +110,30 @@ double gettime(void) {
     gettimeofday(&tv, 0);
     t = (double)tv.tv_sec + ((double)tv.tv_usec / 1000000);
     return t;
+}
+
+int spiReceiveM(char *data, int count) {
+    data[0] |= READ_BIT;
+    if (count > 1) data[0] |= MULTI_BIT;
+    for(i=0; i<count; i++)
+        data[6-i] = spiSendReceive(data[i]);
+    return i;
+}    
+
+int spiSendM(char *data, int count) {
+    if (count > 1) data[0] |= MULTI_BIT;
+    for(i=0; i<count; i++)
+        data[i] = spiSendReceive(data[i]);
+    return i; 
+}    
+
+int readBytes(int handle, char *data, int count) {
+    data[0] |= READ_BIT;
+    if (count > 1) data[0] |= MULTI_BIT;
+    return spiXfer(handle, data, data, count);
+}
+
+int writeBytes(int handle, char *data, int count) {
+    if (count > 1) data[0] |= MULTI_BIT;
+    return spiWrite(handle, data, count);
 }
