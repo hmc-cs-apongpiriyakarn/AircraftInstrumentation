@@ -51,19 +51,19 @@ void initADXL345(void) {
 }
 
 void readADXL345(int sample) {
-    int samples = 5;
+    //int samples = 5;
     int bytes;
     int16_t x, y, z;
-    double tStart, tDuration, t;
-    
-//     tStart = time_time();
-    for (int i = 0; i < samples; i++) {
+//     double tStart, tDuration, t;
+    ; i++) {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
         //bytes = spiSendReceiveBytes(data, 7);
 //         printf("data[0]: %x \nx0: %x \tx1: %x \ny0: %x \ty1: %x \nz0: %x \tz1: %x \n",
 //             data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         
+//     tStart = time_time();
+    for (int i = 0; i < samples
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
@@ -132,7 +132,7 @@ void logData(void) {
 			sample = 0;
 			// time to write to file
 			fwrite(tbuf, sizeof(char), STRBUFSIZE, fptr);
-			fwrite(samples, sizeof(short), SAMPLESPERINTERFAL, fptr);
+			fwrite(samples, sizeof(short), SAMPLESPERINTERVAL, fptr);
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
