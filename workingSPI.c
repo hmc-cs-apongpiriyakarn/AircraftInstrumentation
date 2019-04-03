@@ -81,8 +81,7 @@ int spiSendReceiveBytes(char *data, int count) {
     int i;
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
-    spiSendReceive(data[0]);
-    for(i=1; i<count; i++)
+    for(i=0; i<count; i++)
         data[i] = spiSendReceive(data[i]);
     return i;
 }    
