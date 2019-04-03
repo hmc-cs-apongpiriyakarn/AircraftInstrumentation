@@ -19,7 +19,7 @@ int spiSendReceiveBytes(char *data, int count);
 void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
 void initADXL345(void);
-void readADXL345(void)
+void readADXL345(void);
 
 char data[7];
 
@@ -41,6 +41,11 @@ void initADXL345(void) {
 }
 
 void readADXL345(void) {
+    int samples = 5;
+    int h, bytes;
+    int16_t x, y, z;
+    int speedSPI = 2000000;
+    double tStart, tDuration, t;
     
     tStart = time_time();
     for (int i = 0; i < samples; i++) {
@@ -117,14 +122,7 @@ int readBytes(int handle, char *data, int count) {
 
 int main() {
     pioInit();
-    spiInit(244000, 0);
-    
-    int samples = 5;
-    int h, bytes;
-    int16_t x, y, z;
-    int speedSPI = 2000000;
-    double tStart, tDuration, t;
-    
+    spiInit(244000, 0); 
     initADXL345();
     readADXL345();
    
