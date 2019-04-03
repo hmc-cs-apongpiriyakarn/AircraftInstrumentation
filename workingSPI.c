@@ -55,7 +55,7 @@ void readADXL345(int sample) {
     int bytes;
     int16_t x, y, z;
 //     double tStart, tDuration, t;
-    for (int i = 0; i < samples; i++) {
+//     for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
         //bytes = spiSendReceiveBytes(data, 7);
@@ -74,9 +74,9 @@ void readADXL345(int sample) {
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
-        }
+	}
 //         delayMillis(200);
-    }
+//     }
 //     tDuration = time_time() - tStart; 
 //     printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration); 
 }
@@ -95,7 +95,7 @@ void getDateTime(void) {
 
 void logData(void) {
 	short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
-	int low, high;
+// 	int low, high;
 	char fname[STRBUFSIZE];
 	FILE *fptr;
 	int sample = 0, sec=0;
