@@ -18,18 +18,12 @@ double gettime();
 int spiSendReceiveBytes(char *data, int count);
 void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
+void initADXL345(void);
+void readADXL345(void)
 
 char data[7];
 
-int main() {
-    pioInit();
-    spiInit(244000, 0);
-    
-    int samples = 5;
-    int h, bytes;
-    int16_t x, y, z;
-    int speedSPI = 2000000;
-    double tStart, tDuration, t;
+void initADXL345(void) {
     gpioInitialise();
     h = spiOpen(0, speedSPI, 3);
     
@@ -44,6 +38,9 @@ int main() {
     data[0] = POWER_CONTROL;
     data[1] = 0x08;
     spiSend(data, 2);
+}
+
+void readADXL345(void) {
     
     tStart = time_time();
     for (int i = 0; i < samples; i++) {
@@ -84,8 +81,7 @@ int main() {
         delayMillis(200);
     }
     tDuration = time_time() - tStart; 
-    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);
-    return 0;
+    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);   
 }
 
 double gettime(void) {
@@ -118,3 +114,20 @@ int readBytes(int handle, char *data, int count) {
     if (count > 1) data[0] |= MULTI_BIT;
     return spiXfer(handle, data, data, count);
 }
+
+int main() {
+    pioInit();
+    spiInit(244000, 0);
+    
+    int samples = 5;
+    int h, bytes;
+    int16_t x, y, z;
+    int speedSPI = 2000000;
+    double tStart, tDuration, t;
+    
+    initADXL345();
+    readADXL345();
+   
+    return 0;
+}
+
