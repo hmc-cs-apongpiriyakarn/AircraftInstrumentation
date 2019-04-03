@@ -22,8 +22,10 @@ void initADXL345(void);
 void readADXL345(void);
 
 char data[7];
+int h;
 
 void initADXL345(void) {
+    int speedSPI = 2000000;
     gpioInitialise();
     h = spiOpen(0, speedSPI, 3);
     
@@ -42,9 +44,8 @@ void initADXL345(void) {
 
 void readADXL345(void) {
     int samples = 5;
-    int h, bytes;
+    int bytes;
     int16_t x, y, z;
-    int speedSPI = 2000000;
     double tStart, tDuration, t;
     
     tStart = time_time();
