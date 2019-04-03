@@ -134,9 +134,18 @@ void logData(void) {
 		if (sec >= SECSPERINTERVAL) {
 			sec = 0;
 			sample = 0;
+			printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
+                   		t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
 			// time to write to file
-			fwrite(tbuf, sizeof(char), STRBUFSIZE, fptr);
-			fwrite(samples, sizeof(short), SAMPLESPERINTERVAL, fptr);
+// 			fwrite(tbuf, sizeof(char), STRBUFSIZE, fptr);
+			fprintf(fptr, "%s\n", tbuf);
+			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
+				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f\n", 
+					samples[i][0]*2*16.0/8192.0, 
+					samples[i][1]*2*16.0/8192.0, 
+					samples[i][2]*2*16.0/8192.0);
+			}
+// 			fwrite(samples, sizeof(short), SAMPLESPERINTERVAL, fptr);
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
