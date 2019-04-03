@@ -15,8 +15,8 @@
 #define MULTI_BIT           0x40
 
 double gettime();
-int spiReceiveM(char *data, int count);
-int spiSendM(char *data, int count);
+void spiReceiveM(char *data, int count);
+void spiSendM(char *data, int count);
 int readBytes(int handle, char *data, int count);
 
 char data[7];
@@ -92,19 +92,17 @@ double gettime(void) {
     return t;
 }
 
-int spiReceiveM(char *data, int count) {
+void spiReceiveM(char *data, int count) {
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
     for(int i=0; i<count; i++)
         data[6-i] = spiSendReceive(data[i]);
-    return i;
 }    
 
-int spiSendM(char *data, int count) {
+void spiSendM(char *data, int count) {
     if (count > 1) data[0] |= MULTI_BIT;
     for(int i=0; i<count; i++)
         data[i] = spiSendReceive(data[i]);
-    return i; 
 }    
 
 int readBytes(int handle, char *data, int count) {
