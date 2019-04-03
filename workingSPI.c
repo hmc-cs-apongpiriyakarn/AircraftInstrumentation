@@ -15,7 +15,7 @@
 #define MULTI_BIT           0x40
 
 double gettime();
-void spiSendReceiveBytes(char *data, int count);
+int spiSendReceiveBytes(char *data, int count);
 void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
 
@@ -49,7 +49,7 @@ int main() {
     for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
         //bytes = readBytes(h, data, 7);
-        spiSendReceiveBytes(data, 7);
+        bytes = spiSendReceiveBytes(data, 7);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
@@ -75,12 +75,14 @@ double gettime(void) {
 }
 
 // TO DO: look at the order of bytes sending
-void spiSendReceiveBytes(char *data, int count) {
+int spiSendReceiveBytes(char *data, int count) {
+    int i;
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
     spiSendReceive(data[0]);
-    for(int i=1; i<count; i++)
+    for(i=1; i<count; i++)
         data[i] = spiSendReceive(data[i]);
+    return i;
 }    
 
 void spiSend(char *data, int count) {
