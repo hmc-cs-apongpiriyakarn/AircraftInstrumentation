@@ -55,7 +55,7 @@ void readADXL345(int sample) {
     int bytes;
     int16_t x, y, z;
 //     double tStart, tDuration, t;
-    ; i++) {
+    for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
         //bytes = spiSendReceiveBytes(data, 7);
@@ -63,7 +63,7 @@ void readADXL345(int sample) {
 //             data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         
 //     tStart = time_time();
-    for (int i = 0; i < samples
+    
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
@@ -86,7 +86,7 @@ void getDateTime(void) {
 
 	time_t now = time(NULL); // read seconds since 1970
 	ts = *localtime(&now);
-	strfftime(tbuf, sizeof(tbuf), "%a_%Y_%m_%d_%H_%M_%S_%Z", &ts); //***understand
+	strftime(tbuf, sizeof(tbuf), "%a_%Y_%m_%d_%H_%M_%S_%Z", &ts); //***understand
 }
 
 void logData(void) {
@@ -100,7 +100,7 @@ void logData(void) {
 	getDateTime();
 	sprintf(fname,"log_%s", tbuf);
 	if ((fptr = fopen(fname, "w")) == NULL) {
-		print("Can't write %s\n", fname);
+		printf("Can't write %s\n", fname);
 		exit(1);
 	}
 	
