@@ -25,7 +25,7 @@ int main() {
     pioInit();
     spiInit(244000, 0);
     
-    int samples = 10;
+    int samples = 5;
     int h, bytes;
     int16_t x, y, z;
     int speedSPI = 2000000;
@@ -50,6 +50,26 @@ int main() {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
         //bytes = spiSendReceiveBytes(data, 7);
+        printf("data[0]: %x \nx0: %x x1: %x \ny0: %x y1: %x \nz0: %x z1: %x \n",
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+        if (bytes == 7) {
+            x = (data[2]<<8)|data[1];
+            y = (data[4]<<8)|data[3];
+            z = (data[6]<<8)|data[5];
+            t = time_time() - tStart;
+            printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
+                   t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
+        }
+        delayMillis(200);
+    }
+    tDuration = time_time() - tStart; 
+    printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);
+    
+    tStart = time_time();
+    for (int i = 0; i < samples; i++) {
+        data[0] = DATAX0;
+        //bytes = readBytes(h, data, 7);
+        bytes = spiSendReceiveBytes(data, 7);
         printf("data[0]: %x \nx0: %x x1: %x \ny0: %x y1: %x \nz0: %x z1: %x \n",
             data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         if (bytes == 7) {
