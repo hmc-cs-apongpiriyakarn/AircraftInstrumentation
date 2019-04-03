@@ -20,9 +20,6 @@ void spiSendM(char *data, int count);
 int readBytes(int handle, char *data, int count);
 
 char data[7];
-const int freqMax = 3200;  // maximal allowed cmdline arg sampling rate of data stream, Hz
-const int speedSPI = 2000000;  // SPI communication speed, bps
-const int freqMaxSPI = 100000; // maximal possible communication sampling rate through SPI, Hz (assumption)
 
 int main() {
     pioInit();
@@ -31,6 +28,7 @@ int main() {
     int samples = 25;
     int h, bytes;
     int16_t x, y, z;
+    int speedSPI = 2000000;
     double tStart, tDuration, t;
     gpioInitialise();
     h = spiOpen(0, speedSPI, 3);
@@ -60,7 +58,7 @@ int main() {
             printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
                    t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
         }
-        delayMillis(200)
+        delayMillis(200);
     }
     tDuration = time_time() - tStart; 
     printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n", samples, tDuration, samples/tDuration);
