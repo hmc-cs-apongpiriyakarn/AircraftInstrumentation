@@ -7,25 +7,17 @@
 #include <pigpio.h>
 
 #define BANDWIDTH_RATE      0x2C
-#define BW_RATE             0x2C
-#define POWER_CTL           0x2D
 #define POWER_CONTROL       0x2D
-#define DATA_FORMAT         0x31 // register address
+#define DATA_FORMAT         0x31 
 #define DATAX0              0x32
-
-#define DATA_FORMAT_BYTES   0x0B // +/-16G range, 13-bit res (p26)
-#define DATA_FORMAT_B 0x0B
 #define FIFO_CTL            0x38 
 #define READ_BIT            0x80
 #define MULTI_BIT           0x40
-
-int i;
 
 double gettime();
 int spiReceiveM(char *data, int count);
 int spiSendM(char *data, int count);
 int readBytes(int handle, char *data, int count);
-int writeBytes(int handle, char *data, int count);
 
 char data[7];
 const int timeDefault = 5;  // default duration of data stream, seconds
@@ -39,17 +31,13 @@ const double accConversion = 2 * 16.0 / 8192.0;  // +/- 16g range, 13-bit resolu
 const double tStatusReport = 1;  // time period of status report if data read to file, seconds
 
 int main() {
-
     pioInit();
-    // timerInit();
-
-    // set channel, speed
     spiInit(244000, 0);
-     double vTime = timeDefault;
+    
+    double vTime = timeDefault;
     double vFreq = freqDefault;
     int samples = vFreq * vTime;
     int samplesMaxSPI = freqMaxSPI * vTime;
-    int success = 1;
     int h, bytes;
     char data[7];
     int16_t x, y, z;
@@ -58,25 +46,21 @@ int main() {
     gpioInitialise();
     h = spiOpen(0, speedSPI, 3);
     
-    data[0] = BW_RATE;
+    data[0] = BANDWIDTH_RATE;
     data[1] = 0x0F;
-    //writeBytes(h, data, 2);
-    spiSendM(data, 2);
-    data[0] = DATA_FORMAT;
-    data[1] = DATA_FORMAT_B;
-//     writeBytes(h, data, 2);
-    spiSendM(data, 2);
-    data[0] = POWER_CTL;
-    data[1] = 0x08;
-//     writeBytes(h, data, 2);
     spiSendM(data, 2);
     
-    for (i = 0; i < coldStartSamples; i++) {
+    data[0] = DATA_FORMAT;
+    data[1] = 0x0B; // +/-16G range, 13-bit res
+    spiSendM(data, 2);
+    
+    data[0] = POWER_CONTROL;
+    data[1] = 0x08;
+    spiSendM(data, 2);
+    
+    for (int i = 0; i < coldStartSamples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
-        if (bytes != 7) {
-            success = 0;
-        }
         time_sleep(coldStartDelay);
     }
     // real reads happen here
@@ -92,9 +76,6 @@ int main() {
             t = time_time() - tStart;
             printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
                    t, x * accConversion, y * accConversion, z * accConversion);
-        }
-        else {
-            success = 0;
         }
         time_sleep(delay);  // pigpio sleep is accurate enough for console output, not necessary to use nanosleep
     }
@@ -131,9 +112,4 @@ int readBytes(int handle, char *data, int count) {
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
     return spiXfer(handle, data, data, count);
-}
-
-int writeBytes(int handle, char *data, int count) {
-    if (count > 1) data[0] |= MULTI_BIT;
-    return spiWrite(handle, data, count);
 }
