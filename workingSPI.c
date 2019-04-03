@@ -25,7 +25,7 @@ int main() {
     pioInit();
     spiInit(244000, 0);
     
-    int samples = 25;
+    int samples = 10;
     int h, bytes;
     int16_t x, y, z;
     int speedSPI = 2000000;
