@@ -48,10 +48,10 @@ int main() {
     tStart = time_time();
     for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
-        //bytes = readBytes(h, data, 7);
-        bytes = spiSendReceiveBytes(data, 7);
-        //printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
-            //data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+        bytes = readBytes(h, data, 7);
+        //bytes = spiSendReceiveBytes(data, 7);
+        printf("data[0]: %x \ndata[1]: %x \ndata[2]: %x \ndata[3]: %x \ndata[4]: %x \ndata[5]: %x \ndata[6]: %x \n",
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
