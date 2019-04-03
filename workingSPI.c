@@ -14,16 +14,23 @@
 #define READ_BIT            0x80
 #define MULTI_BIT           0x40
 
-// double gettime();
-// int spiSendReceiveBytes(char *data, int count);
-// void spiSend(char *data, int count);
-// int readBytes(int handle, char *data, int count);
-// void initADXL345(void);
-// void readADXL345(void);
+// Constants
+#define SAMPLESPERSEC 1000
+#define MICROSPERSAMPLE (1000000/SAMPLESPERSEC)
+#define SECSPERINTERVAL 20
+#define SAMPLESPERINTERVAL (SAMPLESPERSEC * SECSPERINTERVAL)
+#define STRBUFSIZE 80
 
+// globals
+char tbuf[STRBUFSIZE];
 char data[7];
 int h;
 short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
+
+double gettime();
+// int spiSendReceiveBytes(char *data, int count);
+void spiSend(char *data, int count);
+int readBytes(int handle, char *data, int count);
 
 void initADXL345(void) {
     int speedSPI = 2000000;
