@@ -20,6 +20,9 @@ void spiSendM(char *data, int count);
 int readBytes(int handle, char *data, int count);
 
 char data[7];
+const int freqMax = 3200;  // maximal allowed cmdline arg sampling rate of data stream, Hz
+const int speedSPI = 2000000;  // SPI communication speed, bps
+const int freqMaxSPI = 100000; // maximal possible communication sampling rate through SPI, Hz (assumption)
 
 int main() {
     pioInit();
