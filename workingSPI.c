@@ -57,11 +57,11 @@ int main() {
     data[1] = 0x08;
     spiSendM(data, 2);
     
-    for (int i = 0; i < coldStartSamples; i++) {
-        data[0] = DATAX0;
-        bytes = readBytes(h, data, 7);
-        time_sleep(coldStartDelay);
-    }
+//     for (int i = 0; i < coldStartSamples; i++) {
+//         data[0] = DATAX0;
+//         bytes = readBytes(h, data, 7);
+//         time_sleep(coldStartDelay);
+//     }
     // real reads happen here
     tStart = time_time();
     for (int i = 0; i < samples; i++) {
