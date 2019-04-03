@@ -15,8 +15,8 @@
 #define MULTI_BIT           0x40
 
 double gettime();
-void spiReceiveM(char *data, int count);
-void spiSendM(char *data, int count);
+void spiSendReceiveBytes(char *data, int count);
+void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
 
 char data[7];
@@ -35,21 +35,21 @@ int main() {
     
     data[0] = BANDWIDTH_RATE;
     data[1] = 0x0F;
-    spiSendM(data, 2);
+    spiSend(data, 2);
     
     data[0] = DATA_FORMAT;
     data[1] = 0x0B; // +/-16G, 13-bit res
-    spiSendM(data, 2);
+    spiSend(data, 2);
     
     data[0] = POWER_CONTROL;
     data[1] = 0x08;
-    spiSendM(data, 2);
+    spiSend(data, 2);
     
     tStart = time_time();
     for (int i = 0; i < samples; i++) {
         data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
-        //spiReceiveM(data, 7);
+        //spiSendReceiveBytes(data, 7);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
@@ -74,15 +74,15 @@ double gettime(void) {
     return t;
 }
 
-void spiReceiveM(char *data, int count) {
+// TO DO: look at the order of bytes sending
+void spiSendReceiveBytes(char *data, int count) {
     data[0] |= READ_BIT;
     if (count > 1) data[0] |= MULTI_BIT;
     for(int i=0; i<count; i++)
         data[6-i] = spiSendReceive(data[i]);
 }    
 
-// TO DO: look at the order of bytes sending
-void spiSendM(char *data, int count) {
+void spiSend(char *data, int count) {
     if (count > 1) data[0] |= MULTI_BIT;
     for(int i=0; i<count; i++)
         data[i] = spiSendReceive(data[i]);
