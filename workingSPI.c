@@ -71,8 +71,8 @@ int main() {
         data[0] = DATAX0;
         //bytes = readBytes(h, data, 7);
         bytes = spiSendReceiveBytes(data, 7);
-//         printf("data[0]: %x \nx0: %x \tx1: %x \ny0: %x \ty1: %x \nz0: %x \tz1: %x \n",
-//             data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+        printf("data[0]: %x \nx0: %x \tx1: %x \ny0: %x \ty1: %x \nz0: %x \tz1: %x \n",
+            data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
         if (bytes == 7) {
             x = (data[2]<<8)|data[1];
             y = (data[4]<<8)|data[3];
