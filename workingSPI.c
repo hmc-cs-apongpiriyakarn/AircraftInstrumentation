@@ -25,7 +25,7 @@
 char tbuf[STRBUFSIZE];
 char data[7];
 int h;
-short samples[SAMPLESPERSEC * SECSPERINTERVAL][4];
+long samples[SAMPLESPERSEC * SECSPERINTERVAL][4];
 
 double gettime();
 void spiSend(char *data, int count);
@@ -132,11 +132,13 @@ void logData(void) {
         
         readADXL345(sample);
 	printf("logdata\n");
-	printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n\n",
+	printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %d\n\n",
 		   sample, 
 		       samples[sample][0]*2*16.0/8192.0, 
 		   samples[sample][1]*2*16.0/8192.0, 
-		       samples[sample][2]*2*16.0/8192.0);
+		       samples[sample][2]*2*16.0/8192.0,
+	      	   samples[sample][3);
+	
 		
 		sample++;
 		if (sample % SAMPLESPERSEC == 0) {
@@ -151,10 +153,11 @@ void logData(void) {
 // 			fwrite(tbuf, sizeof(char), STRBUFSIZE, fptr);
 			fprintf(fptr, "%s\n", tbuf);
 			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
-				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f\n", 
+				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f, timemicros: %d\n", 
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
-					samples[i][2]*2*16.0/8192.0);
+					samples[i][2]*2*16.0/8192.0,
+				        samples[i][3]);
 			}
 // 			fwrite(samples, sizeof(short), SAMPLESPERINTERVAL, fptr);
 			fflush(fptr); // make sure write completes
