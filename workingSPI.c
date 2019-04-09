@@ -72,7 +72,7 @@ void readADXL345(int sample) {
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
-	    samples[sample][3] = micros();
+	    samples[sample][3] = (long) micros();
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
 // 		   sample, 
 // 		       samples[sample][0]*2*16.0/8192.0, 
@@ -117,7 +117,7 @@ void logData(void) {
 	while (1) {
 		while (micros()-mic < MICROSPERSAMPLE); // wait until time for next sample
 		mic += MICROSPERSAMPLE; // set time for next sample
-		printf("samples/sec: %d\n", );
+		
 		
 // 		// *** adjust if Need be
 // 		low = spiSendReceive(ACCELXH);
@@ -137,7 +137,7 @@ void logData(void) {
 		       samples[sample][0]*2*16.0/8192.0, 
 		   samples[sample][1]*2*16.0/8192.0, 
 		       samples[sample][2]*2*16.0/8192.0,
-	      	   samples[sample][3);
+	      	   samples[sample][3]);
 	
 		
 		sample++;
