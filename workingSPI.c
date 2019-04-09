@@ -131,6 +131,12 @@ void logData(void) {
 // 		samples[sample][2] = low | (high<<8);
         
         readADXL345(sample);
+	printf("logdata\n");
+	printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
+		   sample, 
+		       samples[sample][0]*2*16.0/8192.0, 
+		   samples[sample][1]*2*16.0/8192.0, 
+		       samples[sample][2]*2*16.0/8192.0);
 		
 		sample++;
 		if (sample % SAMPLESPERSEC == 0) {
