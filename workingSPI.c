@@ -202,6 +202,7 @@ int main() {
     spiInit(244000, 0); 
     initADXL345();
 //     readADXL345(sample);
+    printf("%s", typeof(micros()));
     logData();
    
     return 0;
