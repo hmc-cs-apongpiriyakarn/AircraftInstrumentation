@@ -28,7 +28,6 @@ int h;
 short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
 
 double gettime();
-// int spiSendReceiveBytes(char *data, int count);
 void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
 
@@ -51,7 +50,6 @@ void initADXL345(void) {
 }
 
 void readADXL345(int sample) {
-    //int samples = 5;
     int bytes;
     int16_t x, y, z;
 //     double tStart, tDuration, t;
@@ -69,16 +67,16 @@ void readADXL345(int sample) {
             y = (data[4]<<8)|data[3];
             z = (data[6]<<8)|data[5];
 //             t = time_time() - tStart;
-            printf(" x = %.3f, y = %.3f, z = %.3f\n",
-                   x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
+//             printf(" x = %.3f, y = %.3f, z = %.3f\n",
+//                    x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
-		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
-		   sample, 
-		       samples[sample][0]*2*16.0/8192.0, 
-		   samples[sample][1]*2*16.0/8192.0, 
-		       samples[sample][2]*2*16.0/8192.0);
+// 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
+// 		   sample, 
+// 		       samples[sample][0]*2*16.0/8192.0, 
+// 		   samples[sample][1]*2*16.0/8192.0, 
+// 		       samples[sample][2]*2*16.0/8192.0);
 	}
 //         delayMillis(200);
 //     }
