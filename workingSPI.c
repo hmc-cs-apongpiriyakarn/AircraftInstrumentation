@@ -72,7 +72,8 @@ void readADXL345(int sample) {
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
-	    samples[sample][3] = micros();
+	    unsigned int var1 = micros();
+	    //samples[sample][3] = micros();
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
 // 		   sample, 
 // 		       samples[sample][0]*2*16.0/8192.0, 
