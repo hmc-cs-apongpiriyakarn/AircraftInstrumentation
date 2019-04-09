@@ -86,7 +86,7 @@ void readADXL345(int sample) {
 //     printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration); 
 }
 
-unsigned int micros(void) {
+unsigned int* micros(void) {
     return SYS_TIMER_CLO;
 }
 
