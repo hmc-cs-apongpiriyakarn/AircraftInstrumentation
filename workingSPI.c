@@ -15,7 +15,7 @@
 #define MULTI_BIT           0x40
 
 // Constants
-#define SAMPLESPERSEC 1000
+#define SAMPLESPERSEC 10
 #define MICROSPERSAMPLE (1000000/SAMPLESPERSEC)
 #define SECSPERINTERVAL 1
 #define SAMPLESPERINTERVAL (SAMPLESPERSEC * SECSPERINTERVAL)
@@ -25,7 +25,7 @@
 char tbuf[STRBUFSIZE];
 char data[7];
 int h;
-short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
+short samples[SAMPLESPERSEC * SECSPERINTERVAL][4];
 
 double gettime();
 void spiSend(char *data, int count);
@@ -72,6 +72,7 @@ void readADXL345(int sample) {
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
+	    samples[sample][3] = micros();
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
 // 		   sample, 
 // 		       samples[sample][0]*2*16.0/8192.0, 
@@ -110,12 +111,13 @@ void logData(void) {
 		printf("Can't write %s\n", fname);
 		exit(1);
 	}
-	
+	while(micros()%1000000);
 	unsigned long mic = micros();
 	
 	while (1) {
 		while (micros()-mic < MICROSPERSAMPLE); // wait until time for next sample
 		mic += MICROSPERSAMPLE; // set time for next sample
+		printf("samples/sec: %d\n", );
 		
 // 		// *** adjust if Need be
 // 		low = spiSendReceive(ACCELXH);
