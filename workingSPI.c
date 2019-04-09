@@ -99,7 +99,7 @@ void getDateTime(void) {
 }
 
 void logData(void) {
-	short samples[SAMPLESPERSEC * SECSPERINTERVAL][3];
+	
 // 	int low, high;
 	char fname[STRBUFSIZE];
 	FILE *fptr;
@@ -132,7 +132,7 @@ void logData(void) {
         
         readADXL345(sample);
 	printf("logdata\n");
-	printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
+	printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n\n",
 		   sample, 
 		       samples[sample][0]*2*16.0/8192.0, 
 		   samples[sample][1]*2*16.0/8192.0, 
