@@ -108,7 +108,7 @@ void logData(void) {
 	}
 	while(micros()%1000000);
 	unsigned long mic = micros();
-	unsigned long tStart = micro();
+	unsigned long tStart = micros();
 	int count = 0;
 	
 	while (1) {
