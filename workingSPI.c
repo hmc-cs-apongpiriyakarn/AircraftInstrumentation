@@ -70,7 +70,7 @@ void readADXL345(int sample) {
             	samples[sample][0] = x;
             	samples[sample][1] = y;
             	samples[sample][2] = z;
-	    	samples[sample][3] = micros();
+	    	samples[sample][3] = (long) micros();
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
 // 		   	sample, 
 // 		       	samples[sample][0]*2*16.0/8192.0, 
@@ -140,7 +140,7 @@ void logData(void) {
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
 			   samples[sample][2]*2*16.0/8192.0,
-			   samples[sample][3]%1000000000);
+			   samples[sample][3]/1000000);
 		sample++;
 		if (sample % SAMPLESPERSEC == 0) {
 			sec++;
@@ -158,7 +158,7 @@ void logData(void) {
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
-					samples[i][3]%1000000000);
+					samples[i][3]/1000000);
 			}
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
