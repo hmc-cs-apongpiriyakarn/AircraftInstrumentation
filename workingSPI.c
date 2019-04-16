@@ -68,7 +68,7 @@ void readADXL345(int sample) {
             	samples[sample][0] = x;
             	samples[sample][1] = y;
             	samples[sample][2] = z;
-	    	samples[sample][3] = (unsigned long) micros()/1000000.0;
+	    	samples[sample][3] = micros()/1000000.0;
 	}
 }
 
@@ -143,13 +143,13 @@ void logData(void) {
 			// time to write to file
 			fprintf(fptr, "%s\n", tbuf);
 			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
-				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f",// t: %f\n", 
+				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f\n", // t: %f\n", 
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0);
 					//samples[i][3]);
 					count++;
-				fprintf(fptr, " t: %lu\n", samples[i][3]);
+				//fprintf(fptr, " t: %lu\n", samples[i][3]);
 			}
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
