@@ -132,7 +132,7 @@ void logData(void) {
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
 			   samples[sample][2]*2*16.0/8192.0,
-			   samples[sample][3]-tstart);
+			   samples[sample][3]-tStart);
 		sample++;
 		if (sample % SAMPLESPERSEC == 0) {
 			sec++;
