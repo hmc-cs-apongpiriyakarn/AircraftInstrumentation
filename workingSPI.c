@@ -68,7 +68,7 @@ void readADXL345(int sample) {
             	samples[sample][0] = x;
             	samples[sample][1] = y;
             	samples[sample][2] = z;
-	    	samples[sample][3] = micros()/1000000.0;
+	    	samples[sample][3] = micros();
 	}
 }
 
@@ -108,6 +108,7 @@ void logData(void) {
 	}
 	while(micros()%1000000);
 	unsigned long mic = micros();
+	unsigned long tStart = micro();
 	int count = 0;
 	
 	while (1) {
@@ -131,7 +132,7 @@ void logData(void) {
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
 			   samples[sample][2]*2*16.0/8192.0,
-			   samples[sample][3]);
+			   samples[sample][3]-tstart);
 		sample++;
 		if (sample % SAMPLESPERSEC == 0) {
 			sec++;
@@ -154,7 +155,7 @@ void logData(void) {
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
-		printf("count: %d\n", count);
+		printf("total sample count: %d\n", count+sample);
 	}
 }
 
