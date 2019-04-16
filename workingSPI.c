@@ -46,7 +46,7 @@ void initADXL345(void) {
     	spiSend(data, 2);
     
     	data[0] = DATA_FORMAT;
-    	data[1] = 0x0B;	 // +/-16G, 13-bit res
+    	data[1] = 0x0B;	 	// +/-16G, 13-bit res
     	spiSend(data, 2);
     
     	data[0] = POWER_CONTROL;
@@ -59,26 +59,17 @@ void readADXL345(int sample) {
     	int16_t x, y, z;
 	data[0] = DATAX0;
         bytes = readBytes(h, data, 7);
-//     tStart = time_time();
     
         if (bytes == 7) {
             	x = (data[2]<<8)|data[1];
 		y = (data[4]<<8)|data[3];
             	z = (data[6]<<8)|data[5];
-//             t = time_time() - tStart;
 
             	samples[sample][0] = x;
             	samples[sample][1] = y;
             	samples[sample][2] = z;
 	    	samples[sample][3] = micros();
-// 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
-// 		   	sample, 
-// 		       	samples[sample][0]*2*16.0/8192.0, 
-// 		   	samples[sample][1]*2*16.0/8192.0, 
-// 		       	samples[sample][2]*2*16.0/8192.0);
 	}
-//     tDuration = time_time() - tStart; 
-//     printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration); 
 }
 
 unsigned int micros(void) {
@@ -148,8 +139,6 @@ void logData(void) {
 		if (sec >= SECSPERINTERVAL) {
 			sec = 0;
 			sample = 0;
-		 	//printf("time = %.3f, x = %.3f, y = %.3f, z = %.3f\n",
-		      	//t, x*2*16.0/8192.0, y*2*16.0/8192.0, z*2*16.0/8192.0);
 
 			// time to write to file
 			fprintf(fptr, "%s\n", tbuf);
