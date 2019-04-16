@@ -15,7 +15,7 @@
 #define READ_BIT            0x80
 #define MULTI_BIT           0x40
 
-#define SAMPLESPERSEC 100
+#define SAMPLESPERSEC 1000
 #define MICROSPERSAMPLE (1000000/SAMPLESPERSEC)
 #define SECSPERINTERVAL 1
 #define SAMPLESPERINTERVAL (SAMPLESPERSEC * SECSPERINTERVAL)
@@ -70,7 +70,7 @@ void readADXL345(int sample) {
             	samples[sample][0] = x;
             	samples[sample][1] = y;
             	samples[sample][2] = z;
-	    	samples[sample][3] = (long) micros();
+	    	samples[sample][3] = micros();
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
 // 		   	sample, 
 // 		       	samples[sample][0]*2*16.0/8192.0, 
