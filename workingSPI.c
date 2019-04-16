@@ -135,7 +135,7 @@ void logData(void) {
 // 		samples[sample][2] = low | (high<<8);
 
 		readADXL345(sample);
-		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %d\n\n",
+		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %f\n\n",
 			   sample, 
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
@@ -154,7 +154,7 @@ void logData(void) {
 			// time to write to file
 			fprintf(fptr, "%s\n", tbuf);
 			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
-				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f, t: %d\n", 
+				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f, t: %f\n", 
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
@@ -164,7 +164,7 @@ void logData(void) {
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
-		print("count: %d, sample: %d\n", count, sample);
+		printf("count: %d, sample: %d\n", count, sample);
 	}
 }
 
