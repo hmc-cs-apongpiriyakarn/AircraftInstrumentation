@@ -68,7 +68,7 @@ void readADXL345(int sample) {
             	samples[sample][0] = x;
             	samples[sample][1] = y;
             	samples[sample][2] = z;
-	    	samples[sample][3] = micros();
+	    	samples[sample][3] = (unsigned long) micros();
 	}
 }
 
