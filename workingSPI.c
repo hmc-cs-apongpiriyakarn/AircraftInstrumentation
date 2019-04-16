@@ -128,7 +128,7 @@ void logData(void) {
 
 		readADXL345(sample);
 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %lu\n\n",
-			   sample, 
+			   count+sample, 
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
 			   samples[sample][2]*2*16.0/8192.0,
@@ -155,7 +155,6 @@ void logData(void) {
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
-		printf("total sample count: %d\n", count+sample);
 	}
 }
 
