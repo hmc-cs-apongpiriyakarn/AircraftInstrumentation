@@ -73,8 +73,8 @@ void readADXL345(int sample) {
             samples[sample][0] = x;
             samples[sample][1] = y;
             samples[sample][2] = z;
-	    unsigned int var1 = micros();
-	    //samples[sample][3] = micros();
+	    //unsigned int var1 = micros();
+	    samples[sample][3] = micros();
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f\n",
 // 		   sample, 
 // 		       samples[sample][0]*2*16.0/8192.0, 
@@ -87,7 +87,7 @@ void readADXL345(int sample) {
 //     printf("%d samples read in %.2f seconds with sampling rate %.1f Hz\n\n", samples, tDuration, samples/tDuration); 
 }
 
-unsigned int* micros(void) {
+unsigned int micros(void) {
     return SYS_TIMER_CLO;
 }
 
