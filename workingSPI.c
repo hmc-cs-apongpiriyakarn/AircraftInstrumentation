@@ -27,9 +27,10 @@ char data[7];
 int h;
 long samples[SAMPLESPERSEC * SECSPERINTERVAL][4];
 
-double gettime();
+double gettime(void);
 void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
+unsigned int* micros(void);
 
 void initADXL345(void) {
     int speedSPI = 2000000;
@@ -203,7 +204,6 @@ int main() {
     spiInit(244000, 0); 
     initADXL345();
 //     readADXL345(sample);
-    printf("%s", typeof(SYS_TIMER_CLO));
     logData();
    
     return 0;
