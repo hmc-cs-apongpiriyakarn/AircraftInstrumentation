@@ -30,7 +30,7 @@ long samples[SAMPLESPERSEC * SECSPERINTERVAL][4];
 double gettime(void);
 void spiSend(char *data, int count);
 int readBytes(int handle, char *data, int count);
-unsigned int* micros(void);
+unsigned int micros(void);
 
 void initADXL345(void) {
     int speedSPI = 2000000;
