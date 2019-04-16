@@ -117,6 +117,7 @@ void logData(void) {
 	}
 	while(micros()%1000000);
 	unsigned long mic = micros();
+	int count = 0;
 	
 	while (1) {
 		while (micros()-mic < MICROSPERSAMPLE); // wait until time for next sample
@@ -134,13 +135,12 @@ void logData(void) {
 // 		samples[sample][2] = low | (high<<8);
 
 		readADXL345(sample);
-		printf("logdata\n");
 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %d\n\n",
 			   sample, 
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
 			   samples[sample][2]*2*16.0/8192.0,
-			   samples[sample][3]/1000000);
+			   samples[sample][3]);
 		sample++;
 		if (sample % SAMPLESPERSEC == 0) {
 			sec++;
@@ -154,15 +154,17 @@ void logData(void) {
 			// time to write to file
 			fprintf(fptr, "%s\n", tbuf);
 			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
-				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f, timemicros: %d\n", 
+				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f, t: %d\n", 
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
-					samples[i][3]/1000000);
+					samples[i][3]);
+					count++;
 			}
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
 		}
+		print("count: %d, sample: %d\n", count, sample);
 	}
 }
 
