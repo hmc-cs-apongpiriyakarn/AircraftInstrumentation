@@ -144,11 +144,11 @@ void logData(void) {
 			// time to write to file
 			fprintf(fptr, "%s\n", tbuf);
 			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
-				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f\n", // t: %f\n", 
+				fprintf(fptr, "x = %.3f, y = %.3f, z = %.3f, t: %lu\n", 
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0);
-					//samples[i][3]);
+					samples[i][3]);
 					count++;
 				//fprintf(fptr, " t: %lu\n", samples[i][3]);
 			}
