@@ -147,11 +147,10 @@ void logData(void) {
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
 					samples[i][3]-tStart);
-					intervalcount++;
-				
 			}
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
+			intervalcount++;
 		}
 	}
 }
