@@ -97,7 +97,7 @@ void logData(void) {
 // 	int low, high;
 	char fname[STRBUFSIZE];
 	FILE *fptr;
-	int sampleinsec = 0, sec = 0, count = 0;
+	int sampleinsec = 0, sec = 0, samplecount = 0;
 	
 	// open file with current timestampe
 	getDateTime();
@@ -108,7 +108,7 @@ void logData(void) {
 	}
 	while(micros()%1000000);
 	unsigned long mic = micros();
-	unsigned long tStart = micros();
+	unsigned long tStart = mic;
 	
 	while (1) {
 		while (micros()-mic < MICROSPERSAMPLE); // wait until time for next sample
@@ -127,7 +127,7 @@ void logData(void) {
 
 		readADXL345(sampleinsec);
 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %lu\n\n",
-			   count+sampleinsec, 
+			   samplecount+sampleinsec, 
 			   samples[sampleinsec][0]*2*16.0/8192.0, 
 			   samples[sampleinsec][1]*2*16.0/8192.0, 
 			   samples[sampleinsec][2]*2*16.0/8192.0,
@@ -148,7 +148,7 @@ void logData(void) {
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
 					samples[i][3]-tStart);
-					count++;
+					samplecount++;
 			}
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
