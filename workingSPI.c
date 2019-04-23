@@ -128,10 +128,10 @@ void logData(void) {
 		readADXL345(sampleinsec);
 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %lu\n\n",
 			   count+sampleinsec, 
-			   samples[sample][0]*2*16.0/8192.0, 
-			   samples[sample][1]*2*16.0/8192.0, 
-			   samples[sample][2]*2*16.0/8192.0,
-			   samples[sample][3]-tStart);
+			   samples[sampleinsec][0]*2*16.0/8192.0, 
+			   samples[sampleinsec][1]*2*16.0/8192.0, 
+			   samples[sampleinsec][2]*2*16.0/8192.0,
+			   samples[sampleinsec][3]-tStart);
 		sampleinsec++;
 		if (sampleinsec % SAMPLESPERSEC == 0) {
 			sec++;
