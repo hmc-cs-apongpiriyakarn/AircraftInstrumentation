@@ -97,7 +97,7 @@ void logData(void) {
 // 	int low, high;
 	char fname[STRBUFSIZE];
 	FILE *fptr;
-	int sample = 0, sec=0;
+	int sampleinsec = 0, sec = 0, count = 0;
 	
 	// open file with current timestampe
 	getDateTime();
@@ -109,7 +109,6 @@ void logData(void) {
 	while(micros()%1000000);
 	unsigned long mic = micros();
 	unsigned long tStart = micros();
-	int count = 0;
 	
 	while (1) {
 		while (micros()-mic < MICROSPERSAMPLE); // wait until time for next sample
@@ -126,20 +125,20 @@ void logData(void) {
 // 		high = spiSendReceive(ACCELYL);
 // 		samples[sample][2] = low | (high<<8);
 
-		readADXL345(sample);
+		readADXL345(sampleinsec);
 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %lu\n\n",
-			   count+sample, 
+			   count+sampleinsec, 
 			   samples[sample][0]*2*16.0/8192.0, 
 			   samples[sample][1]*2*16.0/8192.0, 
 			   samples[sample][2]*2*16.0/8192.0,
 			   samples[sample][3]-tStart);
-		sample++;
-		if (sample % SAMPLESPERSEC == 0) {
+		sampleinsec++;
+		if (sampleinsec % SAMPLESPERSEC == 0) {
 			sec++;
 		}
 		if (sec >= SECSPERINTERVAL) {
 			sec = 0;
-			sample = 0;
+			sampleinsec = 0;
 
 			// time to write to file
 			fprintf(fptr, "%s\n", tbuf);
@@ -148,9 +147,8 @@ void logData(void) {
 					samples[i][0]*2*16.0/8192.0, 
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
-					samples[i][3]);
+					samples[i][3]-tStart);
 					count++;
-				//fprintf(fptr, " t: %lu\n", samples[i][3]);
 			}
 			fflush(fptr); // make sure write completes
 			getDateTime(); // update time for next interval
