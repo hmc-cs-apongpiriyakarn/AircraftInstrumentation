@@ -25,7 +25,7 @@
 char tbuf[STRBUFSIZE];
 char data[7];
 int h;
-long samples[SAMPLESPERSEC * SECSPERINTERVAL][4];
+long samples[SAMPLESPERINTERVAL][4];
 
 double gettime(void);
 void spiSend(char *data, int count);
@@ -97,7 +97,8 @@ void logData(void) {
 // 	int low, high;
 	char fname[STRBUFSIZE];
 	FILE *fptr;
-	int sampleinsec = 0, sec = 0, samplecount = 0;
+	int sampleinsec = 0, sec = 0, intervalcount = 0;
+	int sampleininterval = 0;
 	
 	// open file with current timestampe
 	getDateTime();
@@ -125,23 +126,20 @@ void logData(void) {
 // 		high = spiSendReceive(ACCELYL);
 // 		samples[sample][2] = low | (high<<8);
 
-		readADXL345(sampleinsec);
+		readADXL345(sampleininterval);
 // 		printf("sample num: %d, x = %.3f, y = %.3f, z = %.3f, micros: %lu\n\n",
 // 			   samplecount+sampleinsec, 
 // 			   samples[sampleinsec][0]*2*16.0/8192.0, 
 // 			   samples[sampleinsec][1]*2*16.0/8192.0, 
 // 			   samples[sampleinsec][2]*2*16.0/8192.0,
 // 			   samples[sampleinsec][3]-tStart);
-		sampleinsec++;
-		if (sampleinsec % SAMPLESPERSEC == 0) {
-			sec++;
-		}
-		if (sec >= SECSPERINTERVAL) {
-			sec = 0;
-			sampleinsec = 0;
+		sampleininterval++;
+		
+		if (sampleininterval >= SAMPLESPERINTERVAL) {
+			sampleininterval = 0;
 
 			// time to write to file
-			fprintf(fptr, "%s\n", tbuf);
+			fprintf(fptr, "%s, %d\n", tbuf, intervalcount);
 			for(int i=0; i<SAMPLESPERINTERVAL; i++) {
 				fprintf(fptr, "%d, x = %.3f, y = %.3f, z = %.3f, t: %lu\n", 
 					i,
@@ -149,7 +147,7 @@ void logData(void) {
 					samples[i][1]*2*16.0/8192.0, 
 					samples[i][2]*2*16.0/8192.0,
 					samples[i][3]-tStart);
-					samplecount++;
+					intervalcount++;
 				
 			}
 			fflush(fptr); // make sure write completes
