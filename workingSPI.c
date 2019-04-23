@@ -102,7 +102,7 @@ void logData(void) {
 	
 	// open file with current timestampe
 	getDateTime();
-	sprintf(fname,"log_%s", tbuf);
+	sprintf(fname,"/home/pi/log_%s", tbuf);
 	if ((fptr = fopen(fname, "w")) == NULL) {
 		printf("Can't write %s\n", fname);
 		exit(1);
